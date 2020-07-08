@@ -1,0 +1,87 @@
+{% extends 'basic.html' %}
+
+{% load static %}
+
+{% load humanize %}
+
+{% load extras %}
+
+{% block blogactive %}
+active
+{% endblock %}
+
+{% block title %}
+BlogPost
+{% endblock %}
+
+{% block body %}
+<div class="container my-3">
+        <h2 class="blog-post-title">
+            {{obj.title}}
+        </h2>
+        <div class="blog-post">
+        <p class="blog-post-meta">{{obj.timestamp}} by <a href="/about">{{obj.author}}</a></p>
+        <span id="viewss">
+            ({{obj.views}} views)
+        </span>
+        <p>{{obj.content|safe}}</p>
+        </div><!-- /.blog-post -->
+</div>
+<div class="container my-3">
+    <h4>Comments({{comments|length}})</h4>
+    {% if user.is_authenticated %}
+    <form action="/blog/postcomment" method="POST">{% csrf_token %}
+        <div class="form-group">
+            <input type="text" class="form-control" name="comment" placeholder="Enter your comment here" id="comment">
+        </div>
+        <input type="hidden" name='post' value="{{obj.sno}}">
+        <input type="hidden" name="parentsno" value="">
+        <input style="background-color:#28a745;color: white;border-color: #28a745;" class="btn btn-primary" type="submit" value="Comment">
+    </form>
+    {% else %}
+        <p>
+            
+            <button style="background-color:#28a745;color: white;border-color: #28a745;" type="button" class="ml-2 btn btn-primary" data-toggle="modal" data-target="#loginModal">
+                Login 
+            </button>
+            to post a comment and reply.
+        </p>
+        
+    {% endif %}
+    {% for comment in comments %}
+    <div class="row my-2">
+        <div class="col-md-1" style="align-items:center">
+            <img src="{% static 'img/user.jpg' %}" class=" w-100 mx-auto d-block p-2 border border-success rounded"  alt="User">
+        </div>
+        <div  class="col-md-11"><b>{{comment.user.username}} </b><span style="font-size: 0.75em;" class="badge badge-success">{{comment.timestamp|naturaltime}}</span>  said:
+           <div>{{comment.comment}}</div>
+
+           <div class="reply mx-0">
+            {% if user.is_authenticated %}
+              <div class="collapse" id="replybox{{comment.sno}}">
+                <div class="card  card-body">
+                    <form action="/blog/postcomment" method="POST">{% csrf_token %}
+                        <div class="form-group">
+                            <input type="text" class="form-control" name="comment" placeholder="Enter your reply here" id="comment">
+                            <input type="hidden" name="parentsno" value="{{comment.sno}}">
+                        </div>
+                        <input type="hidden" name='post' value="{{obj.sno}}">
+                        <input style="background-color:#28a745;color: white;border-color: #28a745;" class="btn btn-primary" type="submit" value="Send Reply">
+                    </form>
+                </div>
+              </div>
+            {% endif %}
+            
+              <div class="replies ">
+                  {% for i in replies|get_val:comment.sno %}
+                    <p><b>{{i.user.username}}</b> <span style="font-size: 0.75em;" class="badge badge-success">{{i.timestamp|naturaltime}}</span> replied: {{i.comment}}</p>
+                  {% endfor %}
+              </div>
+
+
+           </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

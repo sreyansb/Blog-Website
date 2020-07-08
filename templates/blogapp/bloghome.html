@@ -1,0 +1,30 @@
+{%extends 'basic.html' %}
+{% block blogactive %}
+active
+{% endblock blogactive %}
+
+{% block title %}
+BLOG HOME
+{% endblock title %}
+
+{% block body %}
+<div class="container text-center">
+    <h2> <i> Articles by Sreyans</i></h2>
+      {% for post in allposts %}
+      <div class="row no-gutters border rounded overflow-hidden my-4 flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col text-center p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-primary">Written by: {{post.author}} - {{post.views}} views</strong>
+          <h3 class="mb-0"><a style="color: black;" href="/blog/{{post.slug}}">{{post.title}}</a></h3>
+          <div class="mb-1 text-muted">{{post.timestamp}}</div>
+          <p class="card-text mb-auto"><div class="preview">{{post.content|safe|truncatechars:100}}</div></p>
+          <div>
+            <a href="/blog/{{post.slug}}" role="button" class="btn btn-primary">Continue reading</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    
+</div>
+{% endblock body %}
+
+

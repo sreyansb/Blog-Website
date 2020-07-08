@@ -1,0 +1,9 @@
+/.vscode
+__pycache__
+*.pyc
+/static/
+/DS_Store
+db.sqlite3
+*~
+myenv
+tinymce.html
